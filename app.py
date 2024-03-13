@@ -1,5 +1,10 @@
 import streamlit as st
 
+st.set_page_config(
+    page_title="Music Exploration Tool",
+    page_icon="🎵",
+)
+
 import requests
 import json
 import shutil
