@@ -28,14 +28,15 @@ if st.button("float32 Embeddings"):
     embeddings_path = "embeddings_unquantized.npy"
     index_path = "likes_index_unquantized.faiss"
 
-embeddings = np.load("embeddings.npy")
-index = faiss.read_index("likes_index.faiss")
+
 
 def query_lastfm(artist_name, track_name):
     res = requests.get(url = f"https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={api_key}&artist={quote(artist_name.lower())}&track={quote(track_name.lower())}&format=json")
     return res.json()
 
 if embeddings_path and index_path:
+    embeddings = np.load(embeddings_path)
+    index = faiss.read_index(index_path)
     if st.button("Load 16 Random Songs"):
         song_idx = np.random.choice(len(likes_dump), 16)
         songs = [likes_dump[i] for i in song_idx]
