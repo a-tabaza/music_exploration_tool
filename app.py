@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title('Music Exploration Tool')
+
 
 import requests
 import json
@@ -10,6 +10,25 @@ import numpy as np
 import faiss
 
 from urllib.parse import quote
+st.title('Music Exploration Tool')
+st.subheader('Explore your music visually and sonically.')
+st.write("By: [Abdulrahman Tabaza](github.com/a-tabaza)")
+st.write("This tool allows you to visually and sonically explore your music, its based on embeddings. To learn more click the learn more expander.")
+
+with st.expander("Learn More"):
+    st.write('''
+    Music is what is known as highly dimensional data, think of a song as a very long list of numbers representing the audio.
+    This is what a song looks like when you load it into a computer, it's a signal, sampled at a certain rate, and it's a list of numbers, something like this:
+    (1310328, 2) -> 2 channels, 1310328 samples.
+    Two means two channels, i.e. stereo, and the rest represent the samples of audio per second.
+    This is known as highly dimensional data.
+    The problem with highly dimensional data is that it's hard to visualize (think of the samples as coordinates in an N-dimensional space) and understand, and it's hard to compare two songs.
+    Think how hard would it be to measure the similarity between two songs, how would you do it?
+    One way to do it is to use embeddings, which are a way to represent the data in a lower-dimensional space, where it's easier to visualize and understand.
+    A million samples or so might give me the exaxt song, but I only need a few hundred to get a good idea of what the song is about.
+    This is an embedding. It's a lower dimensional vector, in this case 128 dimensions, that represents the song.
+    These embeddings are produced by a neural network, and they are trained to represent the song in a way that makes it easy to compare to other songs.                   
+    ''')
 
 output_dir = "likes_dump"
 
@@ -19,16 +38,19 @@ api_key = st.secrets["api_key"]
 
 embeddings_path = None
 index_path = None
+col4, col5 = st.columns(2)
 
-if st.button("Quantized Embeddings"):
-    embeddings_path = "embeddings_quantized.npy"
-    index_path = "likes_index_quantized.faiss"
+st.write("Select the type of embeddings to use:")
 
-if st.button("float32 Embeddings"):
-    embeddings_path = "embeddings_unquantized.npy"
-    index_path = "likes_index_unquantized.faiss"
+with col4:
+    if st.button("Quantized Embeddings"):
+        embeddings_path = "embeddings_quantized.npy"
+        index_path = "likes_index_quantized.faiss"
 
-
+with col5:
+    if st.button("float32 Embeddings"):
+        embeddings_path = "embeddings_unquantized.npy"
+        index_path = "likes_index_unquantized.faiss"
 
 def query_lastfm(artist_name, track_name):
     res = requests.get(url = f"https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={api_key}&artist={quote(artist_name.lower())}&track={quote(track_name.lower())}&format=json")
