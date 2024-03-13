@@ -10,7 +10,7 @@ import faiss
 from urllib.parse import quote
 st.title('Music Exploration Tool')
 st.subheader('Explore your music visually and sonically.')
-st.write("By: [Abdulrahman Tabaza](github.com/a-tabaza)")
+st.write("By: [Abdulrahman Tabaza](https://www.github.com/a-tabaza)")
 st.write("This tool allows you to visually and sonically explore your music, its based on embeddings. To learn more click the learn more expander.")
 
 with st.expander("Learn More"):
