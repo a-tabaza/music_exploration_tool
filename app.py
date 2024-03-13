@@ -34,15 +34,14 @@ if st.button("Load 16 Random Songs"):
             st.write("**Track:**", song['track_name'])
             st.write("**Artist:**", song['artist_name'])
             st.write("**Album:**", song['album_name'])
-            print(embeddings[song_idx[idx]])
-            print(embeddings[song_idx[idx]].shape)
+
             D, I = index.search(embeddings[song_idx[idx]].reshape(1,-1), 5)
             
         with col2:
             try:
                 st.image(metadata["track"]["album"]["image"][-1]["#text"])
             except Exception as e:
-                print(e)
+
                 st.write("No album art found")
         st.audio(song['preview_url'])
         st.write("**Similar Tracks:**")
@@ -56,7 +55,7 @@ if st.button("Load 16 Random Songs"):
                     try:
                         st.image(sim_metadata["track"]["album"]["image"][-1]["#text"])
                     except Exception as e:
-                        print(e)
+
                         st.write("No album art found")
                 st.audio(likes_dump[int(i)]['preview_url'])
         st.write('---')
