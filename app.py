@@ -1,7 +1,5 @@
 import streamlit as st
 
-
-
 import requests
 import json
 import shutil
@@ -36,64 +34,59 @@ likes_dump = json.loads(open('likes_dump.json').read())
 
 api_key = st.secrets["api_key"]
 
-embeddings_path = None
-index_path = None
+EMBEDDING_TYPE = "quantized"
 
-st.write("Select the type of embeddings to use:")
+#st.write("Select the type of embeddings to use:")
 col1, col2 = st.columns(2)
 
-with col1:
-    if st.button("float32 Embeddings"):
-        embeddings_path = "embeddings_unquantized.npy"
-        index_path = "likes_index_unquantized.faiss"
+if EMBEDDING_TYPE == "float32":
+    embeddings_path = "embeddings_unquantized.npy"
+    index_path = "likes_index_unquantized.faiss"
 
-with col2:
-    if st.button("Quantized Embeddings"):
-        embeddings_path = "embeddings_quantized.npy"
-        index_path = "likes_index_quantized.faiss"
+if EMBEDDING_TYPE == "quantized":
+    embeddings_path = "embeddings_quantized.npy"
+    index_path = "likes_index_quantized.faiss"
 
 def query_lastfm(artist_name, track_name):
     res = requests.get(url = f"https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={api_key}&artist={quote(artist_name.lower())}&track={quote(track_name.lower())}&format=json")
     return res.json()
 
-if embeddings_path and index_path:
-    embeddings = np.load(embeddings_path)
-    index = faiss.read_index(index_path)
 
-if embeddings_path and index_path:
+embeddings = np.load(embeddings_path)
+index = faiss.read_index(index_path)
 
-    if st.button("Load 16 Random Songs"):
-        song_idx = np.random.choice(len(likes_dump), 16)
-        songs = [likes_dump[i] for i in song_idx]
-        for idx, song in enumerate(songs):
-            col3, col4 = st.columns(2)
-            metadata = query_lastfm(song['artist_name'], song['track_name'])
-            with col3:
-                st.write("**Track:**", song['track_name'])
-                st.write("**Artist:**", song['artist_name'])
-                st.write("**Album:**", song['album_name'])
+if st.button("Load 16 Random Songs"):
+    song_idx = np.random.choice(len(likes_dump), 16)
+    songs = [likes_dump[i] for i in song_idx]
+    for idx, song in enumerate(songs):
+        col3, col4 = st.columns(2)
+        metadata = query_lastfm(song['artist_name'], song['track_name'])
+        with col3:
+            st.write("**Track:**", song['track_name'])
+            st.write("**Artist:**", song['artist_name'])
+            st.write("**Album:**", song['album_name'])
 
-                D, I = index.search(embeddings[song_idx[idx]].reshape(1,-1), 5)
-                
-            with col4:
-                try:
-                    st.image(metadata["track"]["album"]["image"][-1]["#text"])
-                except Exception as e:
+            D, I = index.search(embeddings[song_idx[idx]].reshape(1,-1), 5)
+            
+        with col4:
+            try:
+                st.image(metadata["track"]["album"]["image"][-1]["#text"])
+            except Exception as e:
 
-                    st.write("No album art found")
-            st.audio(song['preview_url'])
-            st.write("**Similar Tracks:**")
-            for d, i in zip(D[0], I[0]):
-                col5, col6 = st.columns(2)
-                if i != song_idx[idx]:
-                    sim_metadata = query_lastfm(likes_dump[int(i)]['artist_name'], likes_dump[int(i)]['track_name'])
-                    with col5:
-                        st.write(f"{likes_dump[int(i)]['track_name']} by {likes_dump[int(i)]['artist_name']}")
-                    with col6:
-                        try:
-                            st.image(sim_metadata["track"]["album"]["image"][-1]["#text"])
-                        except Exception as e:
+                st.write("No album art found")
+        st.audio(song['preview_url'])
+        st.write("**Similar Tracks:**")
+        for d, i in zip(D[0], I[0]):
+            col5, col6 = st.columns(2)
+            if i != song_idx[idx]:
+                sim_metadata = query_lastfm(likes_dump[int(i)]['artist_name'], likes_dump[int(i)]['track_name'])
+                with col5:
+                    st.write(f"{likes_dump[int(i)]['track_name']} by {likes_dump[int(i)]['artist_name']}")
+                with col6:
+                    try:
+                        st.image(sim_metadata["track"]["album"]["image"][-1]["#text"])
+                    except Exception as e:
 
-                            st.write("No album art found")
-                    st.audio(likes_dump[int(i)]['preview_url'])
-            st.write('---')
+                        st.write("No album art found")
+                st.audio(likes_dump[int(i)]['preview_url'])
+        st.write('---')
