@@ -16,7 +16,7 @@ from urllib.parse import quote
 st.title('Music Exploration Tool')
 st.subheader('Explore your music visually and sonically.')
 st.write("By: [Abdulrahman Tabaza](https://www.github.com/a-tabaza)")
-st.write("This tool allows you to visually and sonically explore your music, its based on embeddings. To learn more click the learn more expander.")
+st.write("This tool allows you to visually and sonically explore your music, its based on embeddings. To explore visually, headover [here](https://atlas.nomic.ai/data/tyqnology/likes-dump-mean-pooled-normalized-vggish/map). To learn more click the learn more expander.")
 
 with st.expander("Learn More"):
     st.write('''
@@ -30,7 +30,9 @@ with st.expander("Learn More"):
     One way to do it is to use embeddings, which are a way to represent the data in a lower-dimensional space, where it's easier to visualize and understand.
     A million samples or so might give me the exaxt song, but I only need a few hundred to get a good idea of what the song is about.
     This is an embedding. It's a lower dimensional vector, in this case 128 dimensions, that represents the song.
-    These embeddings are produced by a neural network, and they are trained to represent the song in a way that makes it easy to compare to other songs.                   
+    These embeddings are produced by a neural network, and they are trained to represent the song in a way that makes it easy to compare to other songs.
+    The songs available on this site are my own personal likes, and the embeddings are produced by a neural network trained on a large dataset of songs (VGGish).
+    The embeddings are then indexed using a library called FAISS, which allows for fast nearest neighbor search.                   
     ''')
 
 output_dir = "likes_dump"
@@ -40,9 +42,6 @@ likes_dump = json.loads(open('likes_dump.json').read())
 api_key = st.secrets["api_key"]
 
 EMBEDDING_TYPE = "quantized"
-
-#st.write("Select the type of embeddings to use:")
-col1, col2 = st.columns(2)
 
 if EMBEDDING_TYPE == "float32":
     embeddings_path = "embeddings_unquantized.npy"
@@ -78,7 +77,7 @@ if st.button("Load 16 Random Songs"):
                 st.image(metadata["track"]["album"]["image"][-1]["#text"])
             except Exception as e:
 
-                st.write("No album art found")
+                st.write("No album art found :(")
         st.audio(song['preview_url'])
         st.write("**Similar Tracks:**")
         for d, i in zip(D[0], I[0]):
@@ -86,12 +85,15 @@ if st.button("Load 16 Random Songs"):
             if i != song_idx[idx]:
                 sim_metadata = query_lastfm(likes_dump[int(i)]['artist_name'], likes_dump[int(i)]['track_name'])
                 with col5:
+                    st.write("**Track:**", likes_dump[int(i)]['track_name'])
+                    st.write("**Artist:**", likes_dump[int(i)]['artist_name'])
+                    st.write("**Album:**", likes_dump[int(i)]['album_name'])
                     st.write(f"{likes_dump[int(i)]['track_name']} by {likes_dump[int(i)]['artist_name']}")
                 with col6:
                     try:
                         st.image(sim_metadata["track"]["album"]["image"][-1]["#text"])
                     except Exception as e:
 
-                        st.write("No album art found")
+                        st.write("No album art found :(")
                 st.audio(likes_dump[int(i)]['preview_url'])
         st.write('---')
