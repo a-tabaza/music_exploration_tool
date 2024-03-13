@@ -59,6 +59,9 @@ def query_lastfm(artist_name, track_name):
 if embeddings_path and index_path:
     embeddings = np.load(embeddings_path)
     index = faiss.read_index(index_path)
+
+if embeddings_path and index_path:
+
     if st.button("Load 16 Random Songs"):
         song_idx = np.random.choice(len(likes_dump), 16)
         songs = [likes_dump[i] for i in song_idx]
