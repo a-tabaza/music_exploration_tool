@@ -88,7 +88,6 @@ if st.button("Load 16 Random Songs"):
                     st.write("**Track:**", likes_dump[int(i)]['track_name'])
                     st.write("**Artist:**", likes_dump[int(i)]['artist_name'])
                     st.write("**Album:**", likes_dump[int(i)]['album_name'])
-                    st.write(f"{likes_dump[int(i)]['track_name']} by {likes_dump[int(i)]['artist_name']}")
                 with col6:
                     try:
                         st.image(sim_metadata["track"]["album"]["image"][-1]["#text"])
