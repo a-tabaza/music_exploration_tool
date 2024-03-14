@@ -2,4 +2,3 @@ faiss-cpu
 pandas
 numpy
 requests
-tqdm
