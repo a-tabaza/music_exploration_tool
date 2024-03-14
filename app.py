@@ -40,7 +40,7 @@ index = faiss.read_index(index_path)
 
 with st.expander("Search"):
     st.write("Songs available:", len(likes_dump))
-    query = st.selectbox("Select songs to search", list(set([song['artist_name'] for song in likes_dump])))
+    query = st.selectbox("Select artist", sorted(list(set([song['artist_name'] for song in likes_dump]))))
     if st.button("Search"):
         song_idx = [i for i, song in enumerate(likes_dump) if song['artist_name'] == query]
         st.write("Songs found:", len(song_idx))
