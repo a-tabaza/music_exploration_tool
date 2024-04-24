@@ -14,7 +14,8 @@ It has my own likes in it.
 The app has a companion Nomic Atlas map to visualize the embeddings, you can find it [here](https://atlas.nomic.ai/data/tyqnology/likes-dump-mean-pooled-normalized-vggish/map)
 
 # Local Setup
-To embed your audio, you can use this repo which has a simple script to embed audio files using VGGish and Mean Pooling, you can find it [here](https://github.com/a-tabaza/audio_embeddings)
+To embed your audio, you can use this repo which has a simple script to embed audio files using VGGish and Mean Pooling, you can find it [here](https://github.com/a-tabaza/audio_embeddings).
+
 Export a .npy file with the embeddings, index them using faiss (I used a flat L2 index for this), save the index, export a metadata JSON file as well, mine has the following attributes per song:
 ```json
 {
